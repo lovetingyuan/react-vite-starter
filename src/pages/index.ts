@@ -1,12 +1,11 @@
-import React from 'react';
+import React from 'react'
 
-const _pages = import.meta.glob<{ default: React.ComponentType<unknown> }>('./*/index.tsx');
+const _pages = import.meta.glob<{ default: React.ComponentType<unknown> }>('./*/index.tsx')
 
-const pages: Record<string, ReturnType<typeof React.lazy>> = {};
+const pages: Record<string, ReturnType<typeof React.lazy>> = {}
 
 Object.keys(_pages).forEach(k => {
-  const comp = _pages[k];
-  pages[k.split('/')[1]] = React.lazy(comp);
-});
+  pages[k.split('/')[1]] = React.lazy(_pages[k])
+})
 
-export default pages;
+export default pages

@@ -1,60 +1,63 @@
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
+import 'react-tabs/style/react-tabs.css'
 import pages from './pages'
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState, useCallback } from 'react'
 
-const pagesNames = Object.keys(pages);
+const pagesNames = Object.keys(pages)
+const getPageIndex = () => {
+  const page = new URLSearchParams(location.search).get('page')
+  if (page) {
+    const index = pagesNames.indexOf(page)
+    return index
+  } else {
+    return 0
+  }
+}
 
 export default function App() {
-  const [index, setIndex] = useState(-1);
-  const onSelect = (index: number) => {
-    const page = pagesNames[index];
-    history.pushState({ page }, page, "?page=" + page);
-    setIndex(index);
+  const [index, setIndex] = useState(getPageIndex())
+  const handleSelect = (index: number) => {
+    const page = pagesNames[index]
+    history.pushState({ page }, page, '?page=' + page)
+    setIndex(index)
   }
+  const handleNavigation = useCallback(() => {
+    const index = getPageIndex()
+    setIndex(index)
+  }, [])
   useEffect(() => {
-    const handleChange = () => {
-      const page = new URLSearchParams(location.search).get('page');
-      if (page) {
-        setIndex(pagesNames.indexOf(page));
-      } else {
-        setIndex(0);
-      }
-    };
-    handleChange();
-    window.addEventListener("popstate", handleChange);
+    window.addEventListener('popstate', handleNavigation)
     return () => {
-      window.removeEventListener("popstate", handleChange);
+      window.removeEventListener('popstate', handleNavigation)
     }
-  }, []);
-  if (index === -1) {
-    return <p>loading...</p>
-  }
+  }, [handleNavigation])
   return (
-    <Tabs onSelect={onSelect} selectedIndex={index}>
+    <Tabs onSelect={handleSelect} selectedIndex={index}>
       <TabList>
-        {
-          pagesNames.map(name => {
-            return (
-              <Tab key={name}>
-                <span style={{ textTransform: 'capitalize' }}>{name}</span>
-              </Tab>
-            )
-          })
-        }
+        {pagesNames.map(name => {
+          return (
+            <Tab key={name}>
+              <span style={{ textTransform: 'capitalize' }}>{name}</span>
+            </Tab>
+          )
+        })}
       </TabList>
-      {
+      {index === -1 ? (
+        <p>
+          <em>Current page is not found, please check the url.</em>
+        </p>
+      ) : (
         Object.keys(pages).map(name => {
-          const Page = pages[name];
+          const Page = pages[name]
           return (
             <TabPanel key={name}>
-              <Suspense fallback={<p>loading...</p>}>
+              <Suspense fallback={<p>Loading...</p>}>
                 <Page />
               </Suspense>
             </TabPanel>
           )
         })
-      }
+      )}
     </Tabs>
   )
 }
