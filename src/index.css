@@ -1,3 +1,5 @@
+@import '@exampledev/new.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -20,22 +22,8 @@
   --theme-color: #646cff;
 }
 
-#root {
-  padding: 20px;
-}
-
 a {
-  font-weight: 500;
   color: var(--theme-color);
-  text-decoration: inherit;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-body {
-  padding: 0;
 }
 
 @media (prefers-color-scheme: light) {

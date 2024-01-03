@@ -34,10 +34,12 @@ export default function App() {
   return (
     <Tabs onSelect={handleSelect} selectedIndex={index}>
       <TabList>
-        {pagesNames.map(name => {
+        {pagesNames.map((name, i) => {
           return (
             <Tab key={name}>
-              <span style={{ textTransform: 'capitalize' }}>{name}</span>
+              <span className={'capitalize ' + (i === index ? 'text-[var(--theme-color)]' : '')}>
+                {name}
+              </span>
             </Tab>
           )
         })}
